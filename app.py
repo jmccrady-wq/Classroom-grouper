@@ -147,6 +147,10 @@ if uploaded_file:
             else:
                 df_present = df.copy()
 
+            # Ensure missing or non-numeric Competence values default to 5
+            if 'Competence' in df_present.columns:
+                df_present['Competence'] = pd.to_numeric(df_present['Competence'], errors='coerce').fillna(5).astype(int)
+
             # Stratified Randomization (seeded by reshuffle counter so button forces new groups)
             seed = st.session_state.get('reshuffle_counter', 0)
             groups = [df_present[df_present['Competence'] == comp] for comp in range(10, 0, -1) if 'Competence' in df_present.columns]
@@ -307,3 +311,4 @@ if uploaded_file:
             if os.path.exists(f): os.remove(f)
 else:
     st.info("👋 Welcome! Please upload an Excel file with tabs named 'Period 1' through 'Period 9' to begin.")
+
